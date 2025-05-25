@@ -7,35 +7,47 @@ if(!isset($_SESSION['role']) || $_SESSION['role']!== 'admin'){
 
 }
 include '../Config/db.php'; // Include the database connection file
+$error = ""; // Initialize error variable
+
 if($_SERVER['REQUEST_METHOD']==='POST'){
     $name = trim($_POST['name']);
     $description = trim($_POST['description']);
     $price = trim($_POST['price']);
     $stock = trim($_POST['stock']);
 
-        if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
-            $image = $_FILES['image']['name'];
-            $tmp_name = $_FILES['image']['tmp_name'];
-        move_uploaded_file($tmp_name, "../images/" . $image);
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    $imageTmpName = $_FILES['image']['tmp_name'];
+    $originalName = $_FILES['image']['name'];
+    $imageExt = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+    $allowed = ['jpg', 'jpeg', 'png', 'gif']; // Allowed file extensions
 
-        //prepare the SQL statement
-        $stmt = mysqli_prepare($conn, "INSERT INTO products (name, description, image, price, stock) VALUES (?, ?, ?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, 'sssdi', $name, $description, $image, $price, $stock);
-        if (mysqli_stmt_execute($stmt)){
-            header('Location: ../Products/list_products.php');
-            exit;
-        }else{
-            $error = "Error adding product: " . mysqli_error($conn);
-            echo $error;
+    if (in_array($imageExt, $allowed)) {
+        $uniqueName = uniqid('img_', true) . '.' . $imageExt; // Create a unique name for the image
+        $uploadDir = '../images/';
+        $uploadPath = $uploadDir . $uniqueName;
+
+        if (move_uploaded_file($imageTmpName, $uploadPath)) {
+            // insert into database with unique image name
+            $stmt = mysqli_prepare($conn, "INSERT INTO products (name, description, image, price, stock) VALUES (?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, 'sssdi', $name, $description, $uniqueName, $price, $stock);
+
+            if (mysqli_stmt_execute($stmt)) {
+                header('Location: ../Products/list_products.php');
+                exit;
+            } else {
+                $error = "❌ Error adding product: " . mysqli_error($conn);
+            }
+        } else {
+            $error = "❌ Failed to upload image.";
         }
-    }else{
-        $error = "Error uploading image: " . $_FILES['image']['error'];
-        echo $error;
+    } else {
+        $error = "❌ Invalid image file type. Allowed types: jpg, jpeg, png, gif.";
     }
-   
-    
-
+} else {
+    $error = "❌ No image file uploaded or there was an error uploading the file.";
 }
+}
+// End of POST request handling
 
 ?>
 <!DOCTYPE html>

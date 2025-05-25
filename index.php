@@ -20,7 +20,7 @@ $result = mysqli_query($conn, "SELECT * FROM products ORDER BY created_at DESC")
         .btn {
             display: inline-block;
             padding: 8px 12px;
-            background-color: #28a745;
+            background-color:rgb(16, 206, 63);
             color: white;
             text-decoration: none;
             border-radius: 4px;
@@ -46,9 +46,9 @@ $result = mysqli_query($conn, "SELECT * FROM products ORDER BY created_at DESC")
     <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
 
-    <h1>Welcome to Our Shope</h1>
+    <h1>Welcome to Puritea</h1>
     <p><a href="cart/view_cart.php">🛒 View Cart</a></p>
-    <a href= "../Ecommerce/Auth/logout.php" class="btn" style="background-color: #dc3545;">Logout</a> 
+    <a href= "../Ecommerce/Auth/logout.php" class="btn" style="background-color:rgb(195, 143, 148);">Logout</a> 
     <div style="display: flex; flex-wrap: wrap;">
     <?php while ($row = mysqli_fetch_assoc($result)): ?>
         <div class="product">
