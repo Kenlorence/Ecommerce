@@ -48,7 +48,7 @@ $result = mysqli_query($conn, "SELECT * FROM products ORDER BY created_at DESC")
 
     <h1>Welcome to Our Shope</h1>
     <p><a href="cart/view_cart.php">🛒 View Cart</a></p>
-
+    <a href= "../Ecommerce/Auth/logout.php" class="btn" style="background-color: #dc3545;">Logout</a> 
     <div style="display: flex; flex-wrap: wrap;">
     <?php while ($row = mysqli_fetch_assoc($result)): ?>
         <div class="product">
@@ -71,5 +71,6 @@ $result = mysqli_query($conn, "SELECT * FROM products ORDER BY created_at DESC")
         </div>
     <?php endwhile; ?>
     </div>
+
 </body>
 </html>
